@@ -1,5 +1,46 @@
 # BootEntryManager Notes
 
+## Version 2.0.0 (2026-05-29)
+
+Changes:
+- Updated runtime script version to 2.0.0.
+- Finalized output order in main loop:
+  - log line
+  - reading spinner
+  - header
+  - menu
+  - boot entries table
+  - prompt
+- Removed numeric exit menu action and kept `q`/`e` exit line.
+- Added stale marker `s` in `Volume #` data and retained alias marker `a`.
+- Restored table focus to `Volume #` + `Type` and minimized both columns using dynamic width calculation.
+- Improved spinner clear behavior to avoid leaving trailing spinner characters on screen.
+- Kept stale cleanup action restricted to entries classified as stale firmware targets.
+
+## Version 1.9.4 (2026-05-27)
+
+Changes:
+- Replaced the shared table column `Default` with `Specified`.
+- `Specified` now shows the partition extracted from the BCD `device` line when available (for example `C:`).
+- Default entry is marked by appending `**` in the `Specified` column.
+- Added simple alias indication:
+  - entries with matching `device + path + systemroot + winpe` fingerprint are marked with `a` in the `Specified` column.
+
+## Version 1.9.3 (2026-05-27)
+
+Changes:
+- Added post-backup cleanup for BCD sidecar transaction files:
+  - After successful backup export, script removes `<backup>.bak.LOG`, `<backup>.bak.LOG1`, and `<backup>.bak.LOG2` when present.
+
+## Version 1.9.2 (2026-05-27)
+
+Changes:
+- Aligned runtime layout to cmd-root architecture:
+  - Runtime script location is `D:\OneDrive\cmd\BootEntryManager.ps1`.
+  - Runtime docs are kept in repository only.
+- Updated installer target path:
+  - `BootEntrayManager_Install.ps1` now installs to `<cmd_location>\BootEntryManager.ps1`.
+
 ## Version 1.9.1 (2026-05-27)
 
 Changes:
@@ -9,7 +50,7 @@ Changes:
   - `BootEntrayManager_Install.ps1`
 - Install script behavior:
   - Parameter `cmd_location` with default `D:\OneDrive\cmd`
-  - Installs `BootEntryManager.ps1` to `<cmd_location>\BootEntryManager\BootEntryManager.ps1`
+  - Installs `BootEntryManager.ps1` to `<cmd_location>\BootEntryManager.ps1`
 
 ## Version 1.9.0 (2026-05-27)
 

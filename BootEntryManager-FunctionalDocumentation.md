@@ -12,14 +12,13 @@
 - Source path used by installer:
   - `<repo_root>\Source\BootEntryManager.ps1`
 - Install target path:
-  - `<cmd_location>\BootEntryManager\BootEntryManager.ps1`
-- If `<cmd_location>\BootEntryManager` does not exist, it is created.
+  - `<cmd_location>\BootEntryManager.ps1`
 - Existing target script is overwritten.
 
 ## Script
 - Name: `BootEntryManager.ps1`
-- Version: `1.9.0`
-- Purpose: Manage Windows Boot Manager menu entries with interactive actions (rename, delete, set default, cleanup dangling menu references) and BCD backup/import support.
+- Version: `2.0.0`
+- Purpose: Manage Windows Boot Manager menu entries with interactive actions (rename, delete, set default, cleanup dangling/stale references) and BCD backup/import/report support.
 
 ## Runtime Requirements
 - Must run in an elevated PowerShell session (Administrator).
@@ -39,13 +38,9 @@ If not elevated, the script attempts to relaunch itself elevated (`RunAs`) and e
 - Only the file name part is used; directory parts are discarded.
 
 ## Boot Volume Label Resolution
-- The script reads the current boot entry with `bcdedit /enum {current} /v`.
-- It reads the `device` line and requires `partition=...` format.
-- Supported partition source formats:
-  - drive letter (for example `C:`)
-  - NT device path (for example `\Device\HarddiskVolume2`)
-- NT device path is mapped to drive letter via `QueryDosDevice`.
-- The script reads the filesystem label using `Get-Volume`.
+- The script detects the EFI System Partition by GPT type:
+  - `{C12A7328-F81F-11D2-BA4B-00A0C93EC93B}`
+- It resolves the corresponding volume and reads `FileSystemLabel` via `Get-Volume`.
 - This label is required and used in backup/log file names.
 - If label is empty, the script throws an error and stops.
 
@@ -82,6 +77,12 @@ For each backup event, the script writes:
 - `bcdedit /export` output as `.bak`
 - a text snapshot (`bcdedit /enum all /v`) as `.txt`
 
+Post-export cleanup:
+- Script removes sidecar BCD transaction files next to the backup when present:
+  - `<backup>.bak.LOG`
+  - `<backup>.bak.LOG1`
+  - `<backup>.bak.LOG2`
+
 Text snapshot post-processing:
 - Script resolves symbolic BCD aliases from non-verbose output (`bcdedit /enum all`).
 - It maps alias -> GUID by resolving each symbolic identifier with `bcdedit /enum {alias} /v`.
@@ -97,8 +98,21 @@ It builds the visible boot menu list from `{bootmgr}` `displayorder` only, prese
 
 For each menu entry, it resolves:
 - `GUID`
+- `Volume #` marker
+- `Type`
 - `Description`
-- `IsDefault` flag (from `{bootmgr}` default)
+
+`Volume #` column behavior:
+- Extracts partition text from the BCD `device` line when it is in `partition=...` form.
+- Appends `**` for the current default entry.
+- Appends `a` for entries detected as simple aliases.
+- Appends `s` for entries classified as stale firmware targets.
+
+Simple alias detection fingerprint:
+- `device`
+- `path`
+- `systemroot`
+- `winpe`
 
 If an entry has no `description`, fallback text is generated:
 - `(unnamed entry) path: <path>` when `path` exists
@@ -110,20 +124,33 @@ If an entry has no `description`, fallback text is generated:
 - GUIDs present in `displayorder` but missing from full BCD objects are treated as dangling.
 - Cleanup action removes those dangling GUIDs from `displayorder` after explicit confirmation.
 
+### 4. Stale Firmware Entry Detection
+- Firmware application entries are inspected for target file existence using resolved device + EFI path.
+- Entries with missing target files are classified as stale.
+- Cleanup action can delete selected stale firmware entries or all stale entries after explicit confirmation.
+
 ## Interactive Menu
 Displayed repeatedly until exit:
 - `[1] Rename entry`
 - `[2] Delete entry`
 - `[3] Set default entry`
-- `[4] Cleanup dangling entries`
+- `[4] Load BCD from backup`
 - `[5] Backup BCD now`
-- `[6] Load BCD from backup`
-- `[7] Exit`
-- `q` or `e` also exit
+- `[6] Cleanup dangling entries`
+- `[7] Cleanup stale firmware entries`
+- `[8] Open text backup report`
+- `[q|e] quit, exit`
 
 The menu also shows:
-- boot volume label
 - full log file path
+
+Render order in the main loop:
+- log line
+- busy read indicator (`Reading BCD entries`)
+- tool header line with version and boot volume label
+- menu selections
+- current boot entry table
+- action prompt
 
 ## Action Behavior
 
@@ -142,8 +169,8 @@ Clipboard restore behavior:
 
 ### Delete Entry
 1. User selects an entry.
-2. Script asks confirmation: `Type YES to delete '<description>'`.
-3. Only exact `YES` proceeds.
+2. Script asks confirmation: `Type Y to delete '<description>'`.
+3. Only exact uppercase `Y` proceeds.
 4. Deletion command:
    - `bcdedit /delete <GUID>`
 
@@ -154,7 +181,7 @@ Clipboard restore behavior:
 
 ### Cleanup Dangling Entries
 1. Script lists dangling GUIDs.
-2. Asks confirmation: `Type YES to remove all dangling displayorder entries`.
+2. Asks confirmation: `Type Y to remove all dangling displayorder entries`.
 3. For each dangling GUID:
    - `bcdedit /displayorder <GUID> /remove`
 
@@ -170,6 +197,10 @@ Selection method:
 
 Import command:
 - `bcdedit /import <selected-backup-file>`
+
+### Open Text Backup Report
+- Lists available `*.txt` reports in backup directory.
+- Opens selected report in Notepad++ when available, otherwise Notepad.
 
 ## Entry Selection Rules
 - Boot entry lists are shown in a table with columns:
@@ -201,7 +232,7 @@ Import command:
 - Backup import validates file name and existence before import.
 
 ## Exit Behavior
-- Menu exits on `7`, `q`, or `e`.
+- Menu exits on `q` or `e`.
 - A `PowerShell.Exiting` engine event also prints `Exiting.` when session terminates.
 
 ## Example Invocation
