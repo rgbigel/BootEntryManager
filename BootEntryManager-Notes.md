@@ -39,7 +39,7 @@ Changes:
   - Runtime script location is `D:\OneDrive\cmd\BootEntryManager.ps1`.
   - Runtime docs are kept in repository only.
 - Updated installer target path:
-  - `BootEntrayManager_Install.ps1` now installs to `<cmd_location>\BootEntryManager.ps1`.
+  - `BootEntryManager_Install.ps1` now installs to `<cmd_location>\BootEntryManager.ps1`.
 
 ## Version 1.9.1 (2026-05-27)
 
@@ -47,7 +47,7 @@ Changes:
 - Added repository source layout for the executable script:
   - `Source\BootEntryManager.ps1`
 - Added install script:
-  - `BootEntrayManager_Install.ps1`
+  - `BootEntryManager_Install.ps1`
 - Install script behavior:
   - Parameter `cmd_location` with default `D:\OneDrive\cmd`
   - Installs `BootEntryManager.ps1` to `<cmd_location>\BootEntryManager.ps1`

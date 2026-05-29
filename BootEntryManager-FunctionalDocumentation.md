@@ -2,11 +2,11 @@
 
 ## Repository Layout
 - `Source\BootEntryManager.ps1` contains the runtime script.
-- `BootEntrayManager_Install.ps1` installs the runtime script into a cmd target folder.
+- `BootEntryManager_Install.ps1` installs the runtime script into a cmd target folder.
 
 ## Installation Script
 
-### `BootEntrayManager_Install.ps1`
+### `BootEntryManager_Install.ps1`
 - Parameter:
   - `cmd_location` (default: `D:\OneDrive\cmd`)
 - Source path used by installer:
