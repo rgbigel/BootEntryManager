@@ -8,9 +8,33 @@
 # - Added stale marker (s) and alias marker (a) support in Volume # values.
 # - Minimized Volume # and Type columns with dynamic aligned widths.
 
+<#
+.SYNOPSIS
+    Manages Windows Boot Manager entries and related maintenance actions.
+
+.DESCRIPTION
+    Provides interactive operations for rename, delete, set default, backup,
+    restore, and cleanup of boot configuration entries.
+
+.PARAMETER LoadBackupFileName
+    Optional backup file name to import at startup.
+
+.PARAMETER HelpMode
+    Shows full help and exits.
+    Aliases: h, ?
+#>
+
+[CmdletBinding()]
 param(
-    [string]$LoadBackupFileName
+    [string]$LoadBackupFileName,
+    [Alias("h","?")]
+    [switch]$HelpMode
 )
+
+if ($HelpMode) {
+    Get-Help $PSCommandPath -Full
+    exit 0
+}
 
 
 $ErrorActionPreference = "Stop"
