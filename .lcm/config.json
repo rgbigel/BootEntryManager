@@ -36,8 +36,8 @@
     }
   },
   "execution_context": {
-    "elevation_required": false,
-    "minimum_privilege": "User",
-    "reason": "Standard user execution"
+    "elevation_required": true,
+    "minimum_privilege": "Administrator",
+    "reason": "Requires Administrator privileges to query and modify BCD boot manager entries via bcdedit"
   }
 }
