@@ -1,0 +1,17 @@
+{
+  "meta": {
+    "module": "settings.json",
+    "path": ".vscode/settings.json",
+    "version": "1.0.0",
+    "config_type": "vscode-repository-settings",
+    "description": "VS Code repository-local settings for BootEntryManager.",
+    "authors": [
+      "Rolf"
+    ],
+    "changelog": [
+      "1.0.0 - Instantiated by LCM Onboarding Engine"
+    ]
+  },
+  "files.eol": "\r\n",
+  "files.encoding": "utf8"
+}

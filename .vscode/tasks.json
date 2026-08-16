@@ -1,0 +1,19 @@
+{
+  "meta": {
+    "config_version": "2026-08-16",
+    "config_path": ".vscode/tasks.json"
+  },
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Test Repository Readiness",
+      "type": "shell",
+      "command": "pwsh -NoProfile -ExecutionPolicy Bypass -File .\\tools\\Test-RepoReadiness.ps1",
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    }
+  ]
+}

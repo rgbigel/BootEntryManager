@@ -1,0 +1,22 @@
+{
+  "meta": {
+    "module": "overrides.json",
+    "path": ".lcm/overrides.json",
+    "version": "1.0.0",
+    "config_type": "lcm-target-repository-overrides",
+    "description": "Documented Lifecycle Model (LCM) local overrides and rule deviations for BootEntryManager.",
+    "authors": [
+      "Rolf"
+    ],
+    "changelog": [
+      "1.0.0 - Initial LCM overrides template initialized"
+    ]
+  },
+  "repository": "BootEntryManager",
+  "suppressions": [],
+  "custom_rules": [],
+  "validation_hooks": {
+    "pre_commit_script": null,
+    "custom_quality_gate": null
+  }
+}

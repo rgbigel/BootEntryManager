@@ -1,0 +1,43 @@
+{
+  "meta": {
+    "module": "config.json",
+    "path": ".lcm/config.json",
+    "version": "1.0.0",
+    "config_type": "lcm-target-repository-config",
+    "description": "Lifecycle Model (LCM) local configuration for BootEntryManager.",
+    "authors": [
+      "Rolf"
+    ],
+    "changelog": [
+      "1.0.0 - Initial LCM Onboarding instantiation"
+    ]
+  },
+  "repository": {
+    "name": "BootEntryManager",
+    "primary_language": "PowerShell",
+    "module_root": ".",
+    "description": "Solution component: BootEntryManager",
+    "author": "Rolf",
+    "onboarded_at": "2026-08-16T15:27:59+02:00"
+  },
+  "governance": {
+    "lcm_version": "4.2.0",
+    "workspace_authority": "D:\\Git_Repositories\\Workspace_AI",
+    "immutable_links": {
+      "junctions": [
+        ".agents/rules/core",
+        ".copilot/Rules/core"
+      ],
+      "hardlinks": [
+        "AGENTS.md",
+        "GEMINI.md",
+        ".copilot/instructions.md"
+      ]
+    }
+  },
+  "execution_context": {
+    "elevation_required": false,
+    "minimum_privilege": "User",
+    "reason": "Standard user execution"
+  }
+}
