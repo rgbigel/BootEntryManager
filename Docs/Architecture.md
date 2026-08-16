@@ -2,32 +2,22 @@
 
 Module: docs/Architecture.md  
 Authors: Rolf, BootEntryManager Architecture Team  
-Version: 2.0.0  
+Version: 2.1.0  
 Status: Authoritative Architecture  
 Date: 2026-08-16  
 
 ---
 
-## 1. Subsystem Architecture
+## 1. Subsystem Architecture & Shared Atoms Integration
 
-`BootEntryManager` is organized into four decoupled functional subsystems:
+`BootEntryManager` is decoupled into local UI and operational workflows, backed by reusable **Functional Atoms** from [`SharedModules`](file:///D:/Git_Repositories/SharedModules):
 
 ```mermaid
 graph TB
-    subgraph UI ["User Interface Layer"]
+    subgraph UI ["User Interface Layer (Local Script)"]
         CLI["CLI Entry Point (Source/BootEntryManager.ps1)"]
         MENU["Interactive Console Menu Loop"]
-        LOG["Session Audit Logger"]
         CLI --> MENU
-        MENU --> LOG
-    end
-
-    subgraph ParserEngine ["BCD Discovery & Parsing Engine"]
-        DISC["EFI Partition Resolver (Get-Volume / Partition Type)"]
-        PARSER["BCD Text Parser (bcdedit /enum all /v)"]
-        ALIAS["Symbolic Alias Mapper"]
-        DISC --> PARSER
-        PARSER --> ALIAS
     end
 
     subgraph OperationEngine ["Maintenance & Mutation Subsystem"]
@@ -36,34 +26,32 @@ graph TB
         MOD --> CLEAN
     end
 
-    subgraph BackupEngine ["BCD Backup & Recovery Subsystem"]
-        EXP["Binary Hive Exporter (bcdedit /export -> .bak)"]
-        TXT["Annotated Text Snapshot Exporter (.txt)"]
-        RESTORE["Backup Hive Importer (bcdedit /import)"]
-        EXP --> TXT
+    subgraph SharedModulesLayer ["SharedModules Functional Atoms (SharedModules/Modules/)"]
+        LOG["Logging.psm1<br/>(Session File Formatting & Structured Log Messages)"]
+        VOL["VolumeAtoms.psm1<br/>(Get-EfiPartitionVolume / Volume Discovery)"]
+        BCD["BcdAtoms.psm1<br/>(Get-BcdBootEntries / Get-BcdDisplayOrder / Export-BcdBackup)"]
     end
 
-    MENU --> DISC
+    MENU --> LOG
+    MENU --> VOL
+    MENU --> BCD
     MENU --> MOD
-    MENU --> EXP
-    MENU --> RESTORE
 ```
 
 ---
 
 ## 2. Component Boundaries & Pipeline
 
-### A. Discovery Pipeline
-1. Identifies the active EFI System Partition by GPT partition type GUID `{C12A7328-F81F-11D2-BA4B-00A0C93EC93B}`.
-2. Resolves partition volume label and establishes the session backup directory: `D:\OneDrive\Documents\Einstellungen\BCD`.
-3. Executes `bcdedit /enum {bootmgr} /v` to extract the authoritative `displayorder` array.
-4. Executes `bcdedit /enum all /v` to parse object GUIDs, descriptions, device paths, and firmware metadata.
+### A. Discovery Pipeline (Shared Atoms)
+1. **EFI Partition Resolution**: Invokes `Get-EfiPartitionVolume` from `VolumeAtoms.psm1` to identify the active EFI System Partition by GPT type GUID `{C12A7328-F81F-11D2-BA4B-00A0C93EC93B}` and resolve its `FileSystemLabel`.
+2. **BCD Enumeration**: Leverages `BcdAtoms.psm1` to parse the `{bootmgr}` `displayorder` and enumerate all boot loader object records via `bcdedit /enum all /v`.
+3. **Session Logging**: Initializes session log naming (`Format-SessionLogFileName`) and writes audit events through `Logging.psm1`.
 
-### B. Backup & Safety Pipeline
-1. Prior to any state-mutating operation, invokes the pre-modification safety backup.
+### B. Backup & Safety Pipeline (Shared Atoms)
+1. Prior to any state-mutating operation (rename, delete, default, import, or cleanup), invokes `Export-BcdBackup` from `BcdAtoms.psm1`.
 2. Produces both `.bak` (binary hive) and `.txt` (human-readable annotated report).
-3. Cleans up transactional `.LOG` sidecars.
+3. Automatically cleans up transactional `.LOG` sidecars.
 
 ### C. Safe Test Execution Strategy
-* **Unit Testing**: Tests parsing logic, regular expressions, and argument contracts against pre-captured static BCD text files.
-* **Zero-Reboot Invariant**: Non-destructive mock testing ensures full test coverage without triggering system restarts.
+* **Unit Testing**: Tests parsing logic, regular expressions, and argument contracts against pre-captured static BCD text fixtures in [`tests/BootEntryManager.Tests.ps1`](file:///D:/Git_Repositories/BootEntryManager/tests/BootEntryManager.Tests.ps1).
+* **Zero-Reboot Invariant**: Non-destructive mock testing ensures complete verification without triggering system restarts.
