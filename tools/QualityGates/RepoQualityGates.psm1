@@ -1,13 +1,13 @@
 <#
 Module: RepoQualityGates.psm1
-Purpose: Local quality gate assertions for BootEntryManager.
+Purpose: Local quality gate assertions for {{REPO_NAME}}.
 Path: tools/QualityGates/RepoQualityGates.psm1
-Authors: Rolf
+Authors: {{AUTHOR}}
 Version: 1.2.0
 Changelog:
 - 2026-08-16: Added Assert-RepoDocumentationFabric gate validating System Prerequisites and DOX compliance under LCM v4.2.0.
 - 2026-08-16: Added Assert-RepoElevationConsistency gate enforcing RULE-ELEV-001 through RULE-ELEV-004.
-- 2026-08-16: Initial quality gate module instantiated.
+- {{DATE}}: Initial quality gate module instantiated.
 #>
 
 function Assert-RepoStructure {
@@ -65,20 +65,32 @@ function Assert-RepoGovernanceLinks {
   [CmdletBinding()]
   param([string]$RepoRoot)
 
-  $requiredLinks = @(
-    (Join-Path $RepoRoot '.agents\rules\core'),
-    (Join-Path $RepoRoot 'AGENTS.md')
-  )
+  # 1. Verify AGENTS.md exists at repository root
+  $agentsMd = Join-Path $RepoRoot 'AGENTS.md'
+  if (-not (Test-Path -LiteralPath $agentsMd)) {
+    throw "Missing AGENTS.md governance pointer at: $agentsMd"
+  }
 
-  foreach ($link in $requiredLinks) {
-    if (-not (Test-Path -LiteralPath $link)) {
-      throw "Missing governance link: $link"
-    }
+  # 2. Verify root governance rules are accessible from workspace parent
+  $wsRoot = Split-Path $RepoRoot -Parent
+  $rootRules = Join-Path $wsRoot '.agents\rules'
+  if (-not (Test-Path -LiteralPath $rootRules)) {
+    $rootRules = Join-Path $wsRoot 'Workspace_AI\.agents\rules'
+  }
+  if (-not (Test-Path -LiteralPath $rootRules)) {
+    throw "Root governance rules not found at: $rootRules"
+  }
+
+  # 3. Assert zero duplicated rule folders in child repository
+  $duplicateCoreRules = Join-Path $RepoRoot '.agents\rules\core'
+  if (Test-Path -LiteralPath $duplicateCoreRules) {
+    throw "Redundant rule duplication detected: $duplicateCoreRules. Child repositories must inherit from root $rootRules directly without local rule copies."
   }
 
   return [pscustomobject]@{
     Status = 'OK'
-    GovernanceLinks = 'Valid'
+    GovernanceInheritance = 'Valid'
+    RootRulesPath = $rootRules
   }
 }
 
