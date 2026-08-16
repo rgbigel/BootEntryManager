@@ -39,6 +39,20 @@ if ($HelpMode) {
 
 $ErrorActionPreference = "Stop"
 
+# --- SHARED MODULES INTEGRATION ----------------------------------------------
+$sharedModulesRoot = Join-Path $PSScriptRoot "..\..\SharedModules\Modules"
+if (-not (Test-Path -LiteralPath $sharedModulesRoot)) {
+    $sharedModulesRoot = "D:\Git_Repositories\SharedModules\Modules"
+}
+
+$loggingMod = Join-Path $sharedModulesRoot "Logging.psm1"
+$volumeMod = Join-Path $sharedModulesRoot "VolumeAtoms.psm1"
+$bcdMod = Join-Path $sharedModulesRoot "BcdAtoms.psm1"
+
+if (Test-Path -LiteralPath $loggingMod) { Import-Module -Name $loggingMod -Force }
+if (Test-Path -LiteralPath $volumeMod) { Import-Module -Name $volumeMod -Force }
+if (Test-Path -LiteralPath $bcdMod) { Import-Module -Name $bcdMod -Force }
+
 # --- CONFIG -------------------------------------------------------------------
 
 $BackupDir = "D:\OneDrive\Documents\Einstellungen\BCD"
@@ -47,6 +61,10 @@ $HasInitialBackupBeenDone = $false
 $ScriptVersion = "2.0.0"
 
 function Get-EfiSystemPartitionVolume {
+    if (Get-Command -Name Get-EfiPartitionVolume -ErrorAction SilentlyContinue) {
+        return Get-EfiPartitionVolume
+    }
+
     $efiGuid = "{C12A7328-F81F-11D2-BA4B-00A0C93EC93B}"
     $efiPartition = Get-Partition | Where-Object { $_.GptType -eq $efiGuid } | Select-Object -First 1
     if (-not $efiPartition) {
