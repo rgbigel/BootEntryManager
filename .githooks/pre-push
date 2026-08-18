@@ -1,0 +1,41 @@
+#!/bin/sh
+# LCM Standard Pre-Push Hook
+# Runs PowerShell AST syntax checks and Pester v5 compliance before allowing git push.
+
+echo ">>> [LCM Pre-Push Hook] Running preflight validation..."
+
+pwsh -NoProfile -ExecutionPolicy Bypass -Command '
+  $hasError = $false
+  $testFiles = @(Get-ChildItem -Path . -Recurse -File -Include *.Tests.ps1,*.tests.ps1 | Where-Object { $_.FullName -notmatch "\\.git\\" })
+  $v4Pattern = "(?<![\w-])Should\s+(?:Not\s+)?(Be|BeGreaterThan|BeLessThan|BeNullOrEmpty|Throw|Match|Contain|BeOfType|BeTrue|BeFalse|BeInSet|BeLike|Exist)\b"
+
+  foreach ($file in $testFiles) {
+    $matches = Select-String -Path $file.FullName -Pattern $v4Pattern
+    if ($matches) {
+      Write-Error "[FAIL] Legacy Pester v4 syntax found in $($file.FullName). Use Pester v5 hyphenated syntax (e.g., Should -Be):"
+      $matches | ForEach-Object { Write-Host "   Line $($_.LineNumber): $($_.Line.Trim())" -ForegroundColor Red }
+      $hasError = $true
+    }
+  }
+
+  $allPs1 = @(Get-ChildItem -Path . -Recurse -File -Include *.ps1,*.psm1 | Where-Object { $_.FullName -notmatch "\\.git\\" })
+  foreach ($psFile in $allPs1) {
+    $errors = $null
+    [System.Management.Automation.Language.Parser]::ParseFile($psFile.FullName, [ref]$null, [ref]$errors) | Out-Null
+    if ($errors -and $errors.Count -gt 0) {
+      Write-Error "[FAIL] Syntax error in $($psFile.FullName)"
+      $hasError = $true
+    }
+  }
+
+  if ($hasError) {
+    exit 1
+  }
+  Write-Host ">>> [LCM Pre-Push Hook] Preflight checks PASSED." -ForegroundColor Green
+'
+
+if [ $? -ne 0 ]; then
+  echo ">>> [LCM Pre-Push Hook] Push ABORTED due to preflight validation errors."
+  exit 1
+fi
+exit 0
