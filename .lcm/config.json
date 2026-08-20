@@ -33,7 +33,8 @@
         "GEMINI.md",
         ".copilot/instructions.md"
       ]
-    }
+    },
+    "absorbed_lcm_version": "5.0.0"
   },
   "execution_context": {
     "elevation_required": false,
