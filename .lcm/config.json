@@ -34,11 +34,11 @@
         ".copilot/instructions.md"
       ]
     },
-    "absorbed_lcm_version": "5.0.0"
+    "absorbed_lcm_version": "5.0.1"
   },
   "execution_context": {
-    "elevation_required": false,
-    "minimum_privilege": "User",
-    "reason": "Standard user execution"
+    "elevation_required": true,
+    "minimum_privilege": "Administrator",
+    "reason": "Requires administrative privileges to manage Windows BCD and system boot entries."
   }
 }

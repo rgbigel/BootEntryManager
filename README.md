@@ -1,6 +1,6 @@
 # BootEntryManager
 
-Version: 2.0.0 (LCM Governed v4.2.0)
+Version: 2.0.1 (LCM Governed v4.2.0)
 
 Windows Boot Configuration Data (BCD) management and menu configuration utility written in PowerShell.
 
