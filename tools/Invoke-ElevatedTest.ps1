@@ -75,7 +75,8 @@ if ($isAdmin -or (-not $needsElevation) -or $ForceInProcess) {
     Write-Host "=================================================================" -ForegroundColor Cyan
     Write-Host " Running Test Suite (Context: $(if ($isAdmin) { 'Elevated (Administrator)' } else { 'Standard User' }))" -ForegroundColor Cyan
     Write-Host " Repository Root: $repoRoot" -ForegroundColor Cyan
-    if ((Get-Module Pester).Version.Major -lt 5) {
+    $loadedPester = Get-Module Pester -ErrorAction SilentlyContinue
+    if ($loadedPester -and $loadedPester.Version.Major -lt 5) {
         Remove-Module Pester -Force -ErrorAction SilentlyContinue
     }
     Import-Module Pester -MinimumVersion 5.0.0 -Force -ErrorAction SilentlyContinue
