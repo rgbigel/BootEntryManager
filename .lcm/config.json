@@ -34,7 +34,7 @@
         ".copilot/instructions.md"
       ]
     },
-    "absorbed_lcm_version": "5.0.2"
+    "absorbed_lcm_version": "5.1.0"
   },
   "execution_context": {
     "elevation_required": true,
