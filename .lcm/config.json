@@ -21,7 +21,7 @@
     "onboarded_at": "2026-08-16T17:33:43+02:00"
   },
   "governance": {
-    "lcm_version": "4.2.0",
+    "lcm_version": "6.1.1",
     "workspace_authority": "D:\\Git_Repositories\\Workspace_AI",
     "immutable_links": {
       "junctions": [
@@ -34,7 +34,7 @@
         ".copilot/instructions.md"
       ]
     },
-    "absorbed_lcm_version": "5.1.0"
+    "absorbed_lcm_version": "6.1.1"
   },
   "execution_context": {
     "elevation_required": true,
