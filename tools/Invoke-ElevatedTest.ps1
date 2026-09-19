@@ -18,8 +18,21 @@ param(
     [string]$OutEvidencePath = (Join-Path $PSScriptRoot '..\out\test_results.json'),
     
     [Parameter(Mandatory=$false)]
-    [switch]$ForceInProcess
+    [switch]$ForceInProcess,
+
+    [Alias('h', '?')]
+    [switch]$Help
 )
+
+if ($Help) {
+    Write-Host "==========================================================================" -ForegroundColor Cyan
+    Write-Host " BootEntryManager ELEVATED TEST RUNNER (Invoke-ElevatedTest.ps1)" -ForegroundColor Cyan
+    Write-Host "==========================================================================" -ForegroundColor Cyan
+    Write-Host "SYNOPSIS: Runs Pester test suites with automatic Administrator elevation handoff."
+    Write-Host "USAGE:    pwsh tools/Invoke-ElevatedTest.ps1 [[-TestPath] <path>] [-ForceInProcess] [-h]"
+    Write-Host "==========================================================================" -ForegroundColor Cyan
+    return
+}
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
@@ -163,3 +176,4 @@ if ($isAdmin -or (-not $needsElevation) -or $ForceInProcess) {
         throw "Elevated test execution did not produce expected evidence at: $OutEvidencePath"
     }
 }
+

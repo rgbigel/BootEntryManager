@@ -1,7 +1,19 @@
 [CmdletBinding()]
 param(
-    [switch]$ForceInProcess
+    [switch]$ForceInProcess,
+    [Alias('h', '?')]
+    [switch]$Help
 )
+
+if ($Help) {
+    Write-Host "==========================================================================" -ForegroundColor Cyan
+    Write-Host " BootEntryManager QUALITY GATE READINESS CHECK (Test-RepoReadiness.ps1)" -ForegroundColor Cyan
+    Write-Host "==========================================================================" -ForegroundColor Cyan
+    Write-Host "SYNOPSIS: Runs local self-readiness and LCM compliance quality checks for BootEntryManager."
+    Write-Host "USAGE:    pwsh tools/Test-RepoReadiness.ps1 [-ForceInProcess] [-h]"
+    Write-Host "==========================================================================" -ForegroundColor Cyan
+    return
+}
 
 <#
 Module: Test-RepoReadiness.ps1
@@ -40,3 +52,4 @@ if ((Test-Path -LiteralPath $testsDir) -and (Test-Path -LiteralPath $elevatedRun
 }
 
 Write-Host "`nBootEntryManager readiness check: OK" -ForegroundColor Green
+
