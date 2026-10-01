@@ -22,7 +22,7 @@
   },
   "governance": {
     "lcm_version": "8.0.0",
-    "workspace_authority": "D:\\Git_Repositories\\Workspace_AI",
+    "workspace_authority": "D:\\Git_Repositories\\LCM_AI",
     "immutable_links": {
       "junctions": [
         ".agents/rules/core",

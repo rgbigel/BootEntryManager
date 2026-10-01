@@ -25,7 +25,7 @@ created: 2026-08-16
 * `docs/`: Technical specifications, architecture, and standards.
 * `tools/`: Local readiness test suite and quality gates.
 * `.lcm/`: Lifecycle model configuration and override manifests.
-* `.agents/rules/core/`: Immutable shared rules linked from `Workspace_AI`.
+* `.agents/rules/core/`: Immutable shared rules linked from `LCM_AI`.
 
 ## 3. Verification & Quality Gates
 Run the local readiness runner before submitting changes:

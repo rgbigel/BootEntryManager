@@ -75,7 +75,7 @@ function Assert-RepoGovernanceLinks {
   $wsRoot = Split-Path $RepoRoot -Parent
   $rootRules = Join-Path $wsRoot '.agents\rules'
   if (-not (Test-Path -LiteralPath $rootRules)) {
-    $rootRules = Join-Path $wsRoot 'Workspace_AI\.agents\rules'
+    $rootRules = Join-Path $wsRoot 'LCM_AI\.agents\rules'
   }
   if (-not (Test-Path -LiteralPath $rootRules)) {
     throw "Root governance rules not found at: $rootRules"

@@ -2,7 +2,7 @@
 Module: tools/Invoke-ElevatedTest.ps1
 Purpose: Runs Pester test suites with automatic Administrator elevation handoff and structured JSON evidence generation.
 Path: tools/Invoke-ElevatedTest.ps1
-Authors: Rolf, Workspace_AI Engine
+Authors: Rolf, LCM_AI Engine
 Version: 1.0.0
 Date: 2026-08-16
 Changelog:
@@ -57,9 +57,9 @@ function Test-ElevationRequired {
         } catch { }
     }
 
-    # 2. Check Workspace_Inventory database cache
+    # 2. Check LCM_Inventory database cache
     $workspaceRoot = Split-Path $TargetRepoRoot -Parent
-    $invPath = Join-Path $workspaceRoot 'Workspace_Inventory\data\inventory.json'
+    $invPath = Join-Path $workspaceRoot 'LCM_Inventory\data\inventory.json'
     if (Test-Path $invPath) {
         try {
             $inv = Get-Content -Path $invPath -Raw | ConvertFrom-Json
