@@ -46,15 +46,10 @@ function Test-IsAdmin {
 function Test-ElevationRequired {
     param([string]$TargetRepoRoot)
 
-    # 1. Check local .lcm/config.json
-    $lcmConfigFile = Join-Path $TargetRepoRoot '.lcm\config.json'
-    if (Test-Path $lcmConfigFile) {
-        try {
-            $cfg = Get-Content -Path $lcmConfigFile -Raw | ConvertFrom-Json
-            if ($cfg.execution_context -and ($null -ne $cfg.execution_context.elevation_required)) {
-                return [bool]$cfg.execution_context.elevation_required
-            }
-        } catch { }
+    # 1. Check the 'Elevation: Administrator' declaration in the repository AGENTS.md
+    $agentsFile = Join-Path $TargetRepoRoot 'AGENTS.md'
+    if (Test-Path $agentsFile) {
+        if ((Get-Content -Path $agentsFile -Raw) -match '(?im)^\s*Elevation:\s*Administrator\s*$') { return $true }
     }
 
     # 2. Check LCM_Inventory database cache

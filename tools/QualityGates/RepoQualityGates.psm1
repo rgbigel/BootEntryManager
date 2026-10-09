@@ -16,8 +16,6 @@ function Assert-RepoStructure {
 
   $requiredPaths = @(
     (Join-Path $RepoRoot 'docs\README.md'),
-    (Join-Path $RepoRoot '.lcm\config.json'),
-    (Join-Path $RepoRoot '.lcm\overrides.json'),
     (Join-Path $RepoRoot '.vscode\settings.json')
   )
 
@@ -98,18 +96,12 @@ function Assert-RepoElevationConsistency {
   [CmdletBinding()]
   param([string]$RepoRoot)
 
-  # 1. Validate .lcm/config.json has execution_context
-  $cfgPath = Join-Path $RepoRoot '.lcm\config.json'
-  if (-not (Test-Path -LiteralPath $cfgPath)) {
-    throw "Missing .lcm/config.json for elevation consistency check at: $cfgPath"
+  # 1. Elevation is declared by an optional 'Elevation: Administrator|User' line in AGENTS.md (absent = User)
+  $agentsPath = Join-Path $RepoRoot 'AGENTS.md'
+  $declaredElevation = $false
+  if (Test-Path -LiteralPath $agentsPath) {
+    $declaredElevation = (Get-Content -LiteralPath $agentsPath -Raw) -match '(?im)^\s*Elevation:\s*Administrator\s*$'
   }
-
-  $cfg = Get-Content -LiteralPath $cfgPath -Raw | ConvertFrom-Json
-  if (-not $cfg.execution_context -or ($null -eq $cfg.execution_context.elevation_required)) {
-    throw "Missing mandatory 'execution_context.elevation_required' block in $cfgPath (RULE-ELEV-001 violation)."
-  }
-
-  $declaredElevation = [bool]$cfg.execution_context.elevation_required
 
   # 2. Scan source files in src/ or Source/ for privileged/self-elevating code
   $srcDir = Join-Path $RepoRoot 'src'
@@ -141,7 +133,7 @@ function Assert-RepoElevationConsistency {
 
   # Bi-directional consistency assertions
   if ($detectedPatterns.Count -gt 0 -and -not $declaredElevation) {
-    throw "Elevation consistency violation (RULE-ELEV-003): Privileged/self-elevating code detected in source files [$($detectedPatterns -join ', ')], but .lcm/config.json declares 'elevation_required: false'."
+    throw "Elevation consistency violation (RULE-ELEV-003): Privileged/self-elevating code detected in source files [$($detectedPatterns -join ', ')], but AGENTS.md declares no 'Elevation: Administrator' line."
   }
 
   # If elevation_required is true, verify tools/Invoke-ElevatedTest.ps1 exists
