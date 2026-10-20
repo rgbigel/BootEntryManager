@@ -3,7 +3,7 @@ Module: RepoQualityGates.psm1
 Purpose: Local quality gate assertions for {{REPO_NAME}}.
 Path: tools/QualityGates/RepoQualityGates.psm1
 Authors: {{AUTHOR}}
-Version: 1.2.0
+Version: 10.0.0
 Changelog:
 - 2026-08-16: Added Assert-RepoDocumentationFabric gate validating System Prerequisites and DOX compliance under LCM v4.2.0.
 - 2026-08-16: Added Assert-RepoElevationConsistency gate enforcing RULE-ELEV-001 through RULE-ELEV-004.

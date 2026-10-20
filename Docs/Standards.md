@@ -4,7 +4,7 @@ Module: Standards.md
 Purpose: Code conventions, formatting rules, and development standards for BootEntryManager.
 Path: docs/Standards.md
 Authors: Rolf
-Version: 1.0.0
+Version: 10.0.0
 Changelog:
 - 2026-08-16: Initial standards scaffolding.
 

@@ -4,7 +4,7 @@ Module: RepoAgentIndex.md
 Purpose: Local repository agent and subagent index for BootEntryManager.
 Path: .github/agents/RepoAgentIndex.md
 Authors: Rolf
-Version: 1.0.0
+Version: 10.0.0
 Changelog:
 - 2026-08-16: Initial creation by LCM Onboarding Engine.
 

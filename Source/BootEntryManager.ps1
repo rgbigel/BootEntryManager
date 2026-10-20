@@ -1,5 +1,5 @@
 # BootEntryManager.ps1
-# Version: 2.0.0
+# Version: 10.0.0
 # Purpose: Manage Windows Boot Manager entries (rename, delete, set default)
 # Changes in 2.0.0:
 # - Finalized menu-first then entries output layout.
@@ -58,7 +58,7 @@ if (Test-Path -LiteralPath $bcdMod) { Import-Module -Name $bcdMod -Force }
 $BackupDir = "D:\OneDrive\Documents\Einstellungen\BCD"
 $BcdEditExe = Join-Path $env:WINDIR "System32\bcdedit.exe"
 $HasInitialBackupBeenDone = $false
-$ScriptVersion = "2.0.0"
+$ScriptVersion = "10.0.0"
 
 function Get-EfiSystemPartitionVolume {
     if (Get-Command -Name Get-EfiPartitionVolume -ErrorAction SilentlyContinue) {

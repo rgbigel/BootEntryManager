@@ -17,7 +17,7 @@
 
 ## Script
 - Name: `BootEntryManager.ps1`
-- Version: `2.0.0`
+- Version: `10.0.0`
 - Purpose: Manage Windows Boot Manager menu entries with interactive actions (rename, delete, set default, cleanup dangling/stale references) and BCD backup/import/report support.
 
 ## Runtime Requirements
