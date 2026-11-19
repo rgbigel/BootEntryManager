@@ -12,6 +12,7 @@
       "1.0.0 - Instantiated by LCM Onboarding Engine"
     ]
   },
-  "files.eol": "\r\n",
+  "files.eol": "\n",
+  "[bat]": { "files.eol": "\r\n" },
   "files.encoding": "utf8"
 }
