@@ -1,0 +1,26 @@
+# LCM line endings (BUG-365; operator Option B 2026-11-16, CRP-332 section 0a; InvariantRules newline-lf):
+# LF for every text file; CRLF only where a Windows-native consumer mis-parses LF.
+# Policy source: LCM_Inventory/tools/Repair-LcmLineEndings.py (keep both in sync).
+* text=auto eol=lf
+*.cmd text eol=crlf
+*.bat text eol=crlf
+*.bas text eol=crlf
+*.cls text eol=crlf
+*.frm text eol=crlf
+# *.reg may be UTF-16: never converted by git; ANSI .reg files are kept CRLF by Repair-LcmLineEndings.py.
+*.reg -text
+# Vendor-signed venv activation scripts: bytes must not change.
+Activate.ps1 -text
+Activate_py.ps1 -text
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.exe binary
+*.dll binary
+*.db binary
+*.zip binary
+*.7z binary
+*.pdf binary
+*.frx binary
